@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	toolVersion string = "0.0.1-rc1"
+	toolVersion string = "0.0.1-rc2"
 )
 
 func main() {
@@ -48,6 +48,10 @@ Usage: %s [flags] version [version]
 		os.Exit(0)
 	}
 
+	// Create a logger to output to stderr
+	stderrLogger := log.New(os.Stderr, "", 0)
+
+	// If no version was provided as argument
 	if v == "" {
 		flag.Usage()
 		os.Exit(1)
@@ -66,17 +70,17 @@ Usage: %s [flags] version [version]
 	if v1 != "" {
 		version1, err = semver.NewVersion(v1)
 		if err != nil {
-			log.Printf("error parsing semver for secondary version %s: %s", v1, err)
+			stderrLogger.Printf("error parsing semver for secondary version %s: %s", v1, err)
 		}
 	}
 
 	// If any of the najor, minor or patch are invalid, output the issue, but ignore it
 	if major < 0 {
-		log.Println("invalid major increment; only positive numbers allowed")
+		stderrLogger.Println("invalid major increment; only positive numbers allowed")
 	}
 
 	if minor < 0 {
-		log.Println("invalid minor increment; only positive numbers allowed")
+		stderrLogger.Println("invalid minor increment; only positive numbers allowed")
 	}
 
 	if patch < 0 {
@@ -100,7 +104,7 @@ Usage: %s [flags] version [version]
 	if prerelease != "" {
 		*version, err = version.SetPrerelease(prerelease)
 		if err != nil && err == semver.ErrInvalidPrerelease {
-			log.Printf("invalid prerelease format; your prerelease must follow this regex: %s", semver.ValidPrerelease)
+			stderrLogger.Printf("invalid prerelease format; your prerelease must follow this regex: %s", semver.ValidPrerelease)
 		}
 	}
 
@@ -108,7 +112,7 @@ Usage: %s [flags] version [version]
 	if metadata != "" {
 		*version, err = version.SetMetadata(metadata)
 		if err != nil && err == semver.ErrInvalidMetadata {
-			log.Printf("invalid metadata format; your metadata must follow this regex: %s", semver.ValidPrerelease)
+			stderrLogger.Printf("invalid metadata format; your metadata must follow this regex: %s", semver.ValidPrerelease)
 		}
 	}
 
