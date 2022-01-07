@@ -1,0 +1,119 @@
+= semver
+
+`semver`; a tool to increment / compare your semantic versions
+
+This tool is simply a wrapper around the https://github.com/Masterminds/semver[SemVer] library from https://github.com/Masterminds[Masterminds]. All credits go to them for writing the library.
+
+== Installation
+
+[source,bash]
+----
+go install github.com/huguesalary/semver
+----
+
+== Usage
+
+[source]
+----
+Usage: ./semver [flags] version [version]
+      If [version] is provided, the command will output the whether version is lower (-1),
+      equal (0), or greater (1) than [version] after the applying the major, minor, patch,
+      prerelease and metadata transformations to version
+
+  -major int
+      increase major by n
+  -metadata string
+        set metadata
+  -minor int
+        increase minor by n
+  -patch int
+        increase patch by n
+  -prerelease string
+        set prerelease
+  -version
+        output this tool's version
+----
+
+== Examples
+
+=== Just output the version
+
+[source,bash]
+----
+$ semver 1.0.0
+1.0.0
+----
+
+=== Output version with incremented Major
+
+[source,bash]
+----
+$ semver -major 1 1.0.0
+2.0.0
+----
+
+=== Output version with incremented Minor
+
+[source,bash]
+----
+$ semver -minor 1 1.0.0
+1.1.0
+----
+
+=== Output version with incremented Patch 3 times
+
+[source,bash]
+----
+$ semver -patch 3 1.0.0
+1.0.3
+----
+
+=== Output version with incremented Major, Minor and Patch
+
+[source,bash]
+----
+$ semver -major 1 -minor 1 -patch 1 1.0.0
+2.1.1
+----
+
+=== Output version with incremented Major, Minor and Patch; + Prerelease and Metadata information
+
+[source,bash]
+----
+$ semver -major 1 -minor 1 -patch 1 -prerelease rc1 -metadata buildx 1.0.0
+2.1.1-rc1+buildx
+----
+
+=== Output comparison between 2 _equal_ versions
+
+[source,bash]
+----
+$ semver 1.0.0 1.0.0
+0
+----
+
+=== Output comparison between 2 versions: first version is smaller than second
+
+[source,bash]
+----
+$ semver 1.0.0 2.0.0
+-1
+----
+
+=== Output comparison between 2 versions: first version is greater than second
+
+[source,bash]
+----
+$ semver 1.0.0 0.0.9
+1
+----
+
+=== Output comparison between 2 versions: first version is greater than second, after applying all transformations
+
+[source,bash]
+----
+$ semver -major 1 -minor 2 -patch 3 1.0.0 2.2.2
+1
+----
+
+(2.2.3 is > 2.2.2)
